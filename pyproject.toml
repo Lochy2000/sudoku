@@ -1,0 +1,39 @@
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+select = [
+  "E", "F", "W",  # pycodestyle/pyflakes
+  "I",              # isort
+  "N",              # pep8-naming
+  "UP",             # pyupgrade
+  "B",              # flake8-bugbear
+]
+ignore = [
+]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+
+[tool.ruff.isort]
+known-first-party = ["sudoku_site", "accounts", "puzzle"]
+
+[tool.mypy]
+python_version = "3.12"
+warn_unused_configs = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+no_implicit_optional = true
+strict_equality = true
+plugins = ["mypy_django_plugin.main"]
+
+[mypy.plugins.django-stubs]
+django_settings_module = "sudoku_site.settings.base"
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "sudoku_site.settings.dev"
+addopts = "-q"
+python_files = ["tests.py", "test_*.py", "*_tests.py"]
+
+
