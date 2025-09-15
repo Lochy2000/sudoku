@@ -29,5 +29,3 @@ jobs:
         run: |
           python manage.py migrate --noinput
           pytest -q
-
-

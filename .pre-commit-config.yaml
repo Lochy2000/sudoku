@@ -17,7 +17,10 @@ repos:
     rev: v1.11.2
     hooks:
       - id: mypy
-        additional_dependencies: [django-stubs]
+        additional_dependencies: [
+          "django-stubs",
+          "dj-database-url",
+          "Django>=5,<6",
+          "djangorestframework>=3.15,<4"
+        ]
         args: ["--config-file=pyproject.toml"]
-
-

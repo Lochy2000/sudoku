@@ -1,6 +1,8 @@
 [tool.ruff]
 line-length = 100
 target-version = "py312"
+
+[tool.ruff.lint]
 select = [
   "E", "F", "W",  # pycodestyle/pyflakes
   "I",              # isort
@@ -8,14 +10,13 @@ select = [
   "UP",             # pyupgrade
   "B",              # flake8-bugbear
 ]
-ignore = [
-]
+ignore = []
 
 [tool.ruff.format]
 quote-style = "double"
 indent-style = "space"
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 known-first-party = ["sudoku_site", "accounts", "puzzle"]
 
 [tool.mypy]
@@ -28,12 +29,10 @@ no_implicit_optional = true
 strict_equality = true
 plugins = ["mypy_django_plugin.main"]
 
-[mypy.plugins.django-stubs]
-django_settings_module = "sudoku_site.settings.base"
+[tool.django-stubs]
+django_settings_module = "sudoku_site.settings"
 
 [tool.pytest.ini_options]
 DJANGO_SETTINGS_MODULE = "sudoku_site.settings.dev"
 addopts = "-q"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
-
-

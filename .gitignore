@@ -60,3 +60,5 @@ env/*.env
 **/__pycache__/
 
 
+# Local docs (ignore repo docs by default)
+docs/
