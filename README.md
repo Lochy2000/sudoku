@@ -46,3 +46,6 @@ docker compose up --build
 - Env vars: `DJANGO_SECRET_KEY`, `DJANGO_DEBUG`, `DJANGO_ALLOWED_HOSTS`, `DATABASE_URL`
 
 Detailed setup and usage: see `docs/bootstrap-and-usage.md`.
+
+### ERD
+See `ops/erd.md` for a text ERD of core models.
