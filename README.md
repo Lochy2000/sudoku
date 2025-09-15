@@ -1,3 +1,5 @@
+suduko.png
+
 # Sudoku Backend (Django)
 
 Backend for Sudoku generation, gameplay, and daily challenges. Built with Django 5, DRF, and Postgres (SQLite fallback in dev).

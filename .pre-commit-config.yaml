@@ -3,24 +3,32 @@ repos:
     rev: v4.6.0
     hooks:
       - id: check-yaml
+        language_version: system
       - id: end-of-file-fixer
+        language_version: system
       - id: trailing-whitespace
+        language_version: system
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.6.8
     hooks:
       - id: ruff
         args: ["--fix"]
+        language_version: system
       - id: ruff-format
+        language_version: system
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.11.2
     hooks:
       - id: mypy
+        language_version: system
         additional_dependencies: [
           "django-stubs",
           "dj-database-url",
           "Django>=5,<6",
-          "djangorestframework>=3.15,<4"
+          "djangorestframework>=3.15,<4",
+          "pytest>=8.2,<9",
+          "pytest-django>=4.8,<5"
         ]
         args: ["--config-file=pyproject.toml"]
