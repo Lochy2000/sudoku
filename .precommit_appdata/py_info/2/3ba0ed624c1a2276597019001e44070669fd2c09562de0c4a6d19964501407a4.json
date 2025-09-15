@@ -1,0 +1,65 @@
+{
+  "content": {
+    "architecture": 64,
+    "base_exec_prefix": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0",
+    "base_prefix": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0",
+    "distutils_install": {},
+    "exec_prefix": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0",
+    "executable": "C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+    "file_system_encoding": "utf-8",
+    "free_threaded": false,
+    "has_venv": true,
+    "implementation": "CPython",
+    "max_size": 9223372036854775807,
+    "original_executable": "C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+    "os": "nt",
+    "path": [
+      "C:\\Users\\User\\projects\\sudoku\\sudoku\\.venv\\Lib\\site-packages\\virtualenv\\discovery",
+      "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\python311.zip",
+      "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\DLLs",
+      "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib",
+      "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0",
+      "C:\\Users\\User\\AppData\\Local\\Packages\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\LocalCache\\local-packages\\Python311\\site-packages",
+      "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\site-packages"
+    ],
+    "platform": "win32",
+    "prefix": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0",
+    "real_prefix": null,
+    "stdout_encoding": "cp1252",
+    "sysconfig": {
+      "makefile_filename": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib\\config\\Makefile"
+    },
+    "sysconfig_paths": {
+      "data": "{base}",
+      "include": "{installed_base}/Include",
+      "platlib": "{base}/Lib/site-packages",
+      "platstdlib": "{base}/Lib",
+      "purelib": "{base}/Lib/site-packages",
+      "scripts": "{base}/Scripts",
+      "stdlib": "{installed_base}/Lib"
+    },
+    "sysconfig_scheme": "venv",
+    "sysconfig_vars": {
+      "PYTHONFRAMEWORK": null,
+      "base": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0",
+      "installed_base": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0"
+    },
+    "system_executable": "C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+    "system_stdlib": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib",
+    "system_stdlib_platform": "C:\\Program Files\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_3.11.2544.0_x64__qbz5n2kfra8p0\\Lib",
+    "tcl_lib": null,
+    "tk_lib": null,
+    "version": "3.11.9 (tags/v3.11.9:de54cf5, Apr  2 2024, 10:12:12) [MSC v.1938 64 bit (AMD64)]",
+    "version_info": {
+      "major": 3,
+      "micro": 9,
+      "minor": 11,
+      "releaselevel": "final",
+      "serial": 0
+    },
+    "version_nodot": "311"
+  },
+  "hash": "e8311e49b0fba2b2219c47b04148cdb2e790623a7d95f6aa16dcf310903a7bc9",
+  "path": "C:\\Users\\User\\AppData\\Local\\Microsoft\\WindowsApps\\PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0\\python.exe",
+  "st_mtime": 1749937210.0857089
+}
