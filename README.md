@@ -51,3 +51,6 @@ Detailed setup and usage: see `docs/bootstrap-and-usage.md`.
 
 ### ERD
 See `ops/erd.md` for a text ERD of core models.
+
+### Testing & Quality
+See `docs/testing.md` for how linting, typing, tests, and pre-commit work.
