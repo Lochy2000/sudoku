@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from typing import Literal, cast
+from typing import Literal
 
 from .engines import DokusanEngine, Engine, GridSpec
 
@@ -18,7 +18,7 @@ def get_engine_for(spec: GridSpec, *, source: EngineName | None = None) -> Engin
         if env_val is None:
             src: EngineName = "dokusan"
         elif env_val == "dokusan":
-            src = cast(EngineName, "dokusan")
+            src = "dokusan"
         else:
             raise ValueError(f"Unknown engine source in env: {env_val}")
     else:

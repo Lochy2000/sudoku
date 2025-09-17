@@ -17,7 +17,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.http import HttpRequest, HttpResponse
-from django.urls import URLPattern, URLResolver, path
+from django.urls import URLPattern, URLResolver, include, path
 
 
 def healthcheck(_request: HttpRequest) -> HttpResponse:
@@ -27,4 +27,5 @@ def healthcheck(_request: HttpRequest) -> HttpResponse:
 urlpatterns: list[URLPattern | URLResolver] = [
     path("admin/", admin.site.urls),
     path("healthz", healthcheck),
+    path("accounts/", include("accounts.urls")),
 ]
