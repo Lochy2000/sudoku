@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Any
 
 from django.utils import timezone
 
@@ -52,10 +53,18 @@ def apply_move(
     # Ensure board_state is a string; if JSON structure, normalize by joining
     if isinstance(game.board_state, str):
         board = list(game.board_state)
+    elif isinstance(game.board_state, list):
+        board = [str(v) for v in game.board_state]
     else:
-        # Accept list[int] with 0 for empty
-        if isinstance(game.board_state, list):
-            board = [str(v) for v in game.board_state]
+        # Attempt to coerce common JSON-like structures
+        if isinstance(game.board_state, dict) and "board" in game.board_state:
+            raw: Any = game.board_state["board"]
+            if isinstance(raw, str):
+                board = list(raw)
+            elif isinstance(raw, list):
+                board = [str(v) for v in raw]
+            else:
+                raise ValueError("Unsupported board_state format")
         else:
             raise ValueError("Unsupported board_state format")
 

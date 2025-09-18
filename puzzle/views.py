@@ -10,6 +10,7 @@ from rest_framework.response import Response
 
 from puzzle.models import DailyChallenge, GameSession, PuzzleTemplate
 from puzzle.services.gameplay import start_game, validate_board
+from puzzle.services.hints import get_next_hint
 
 
 class PuzzleTemplateViewSet(viewsets.ReadOnlyModelViewSet):
@@ -81,6 +82,20 @@ class GameSessionViewSet(viewsets.ViewSet):
         assert pk is not None
         ok = validate_board(game_id=int(pk))
         return Response({"solved": ok})
+
+    @action(detail=True, methods=["post"], url_path="hint")
+    def hint(self, request: Request, pk: str | None = None) -> Response:
+        assert pk is not None
+        hint = get_next_hint(game_id=int(pk))
+        if hint is None:
+            return Response({}, status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {
+                "cell_index": hint.cell_index,
+                "value": hint.value,
+                "technique": hint.technique,
+            }
+        )
 
 
 @api_view(["GET"])

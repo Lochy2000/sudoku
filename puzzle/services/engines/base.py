@@ -35,3 +35,8 @@ class Engine(ABC):
     @abstractmethod
     def rate_difficulty(self, *, spec: GridSpec, grid: str) -> float:
         """Return a difficulty metric for the given grid."""
+
+    # Optional capabilities (for smaller grids)
+    def supports(self, *, spec: GridSpec) -> bool:
+        """Return True if the engine can operate on the provided spec."""
+        return True

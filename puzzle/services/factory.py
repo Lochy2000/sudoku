@@ -25,5 +25,8 @@ def get_engine_for(spec: GridSpec, *, source: EngineName | None = None) -> Engin
         src = source
 
     if src == "dokusan":
-        return DokusanEngine()
+        eng = DokusanEngine()
+        if not eng.supports(spec=spec):
+            raise ValueError(f"Engine 'dokusan' does not support spec size={spec.size}")
+        return eng
     raise ValueError(f"Unknown engine source: {src}")

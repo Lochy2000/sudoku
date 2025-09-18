@@ -15,7 +15,7 @@ class DokusanEngine(Engine):
     def _rand_grid(self, *, spec: GridSpec, seed: int | None) -> tuple[str, str]:
         rng = random.Random(seed)
         n = spec.size * spec.size
-        # Produce a pseudo-solution of 1..9 cycling; adequate placeholder for tests.
+        # Produce a pseudo-solution cycling 1..size; placeholder for tests.
         solution = "".join(str((i % spec.size) + 1) for i in range(n))
         # Create givens by zeroing out ~60% cells deterministically
         givens_list = list(solution)
@@ -28,8 +28,9 @@ class DokusanEngine(Engine):
     def generate(
         self, *, spec: GridSpec, difficulty: str, seed: int | None = None
     ) -> tuple[str, str, float]:
-        if spec.size != 9:
-            raise ValueError("DokusanEngine currently supports only 9×9 in this stub")
+        # Support 4×4, 6×6, 9×9 in stub
+        if spec.size not in (4, 6, 9):
+            raise ValueError("Unsupported size for DokusanEngine stub")
         givens, solution = self._rand_grid(spec=spec, seed=seed)
         metric = self.rate_difficulty(spec=spec, grid=givens)
         return givens, solution, metric
@@ -50,3 +51,6 @@ class DokusanEngine(Engine):
         filled = sum(1 for ch in grid if ch != "0")
         empties = total - filled
         return empties / total
+
+    def supports(self, *, spec: GridSpec) -> bool:  # pragma: no cover - trivial
+        return spec.size in (4, 6, 9)
