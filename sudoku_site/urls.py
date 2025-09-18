@@ -18,14 +18,34 @@ Including another URLconf
 from django.contrib import admin
 from django.http import HttpRequest, HttpResponse
 from django.urls import URLPattern, URLResolver, include, path
+from rest_framework.routers import DefaultRouter
+from rest_framework.schemas import get_schema_view
+
+from puzzle.views import GameSessionViewSet, PuzzleTemplateViewSet, daily_challenge_view
 
 
 def healthcheck(_request: HttpRequest) -> HttpResponse:
     return HttpResponse("ok")
 
 
+router = DefaultRouter()
+router.register(r"puzzles", PuzzleTemplateViewSet, basename="puzzles")
+router.register(r"games", GameSessionViewSet, basename="games")
+
+
 urlpatterns: list[URLPattern | URLResolver] = [
     path("admin/", admin.site.urls),
     path("healthz", healthcheck),
     path("accounts/", include("accounts.urls")),
+    path("api/", include(router.urls)),
+    path("api/daily/<date>", daily_challenge_view),
+    path(
+        "api/schema",
+        get_schema_view(
+            title="Sudoku API",
+            description="API schema for Sudoku backend",
+            version="1.0.0",
+        ),
+        name="openapi-schema",
+    ),
 ]
