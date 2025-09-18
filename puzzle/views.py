@@ -3,7 +3,8 @@ from __future__ import annotations
 from typing import Any
 
 from django.utils.dateparse import parse_date
-from rest_framework import status, viewsets
+from django.conf import settings
+from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action, api_view
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -11,6 +12,7 @@ from rest_framework.response import Response
 from puzzle.models import DailyChallenge, GameSession, PuzzleTemplate
 from puzzle.services.gameplay import start_game, validate_board
 from puzzle.services.hints import get_next_hint
+from .serializers import GameCreateSerializer, GameUpdateSerializer, PuzzleListQuerySerializer
 
 
 class PuzzleTemplateViewSet(viewsets.ReadOnlyModelViewSet):
@@ -18,8 +20,10 @@ class PuzzleTemplateViewSet(viewsets.ReadOnlyModelViewSet):
     http_method_names = ["get"]
 
     def list(self, request: Request, *args: Any, **kwargs: Any) -> Response:
-        size = int(request.query_params.get("size", 9))
-        difficulty = request.query_params.get("difficulty", "medium")
+        q = PuzzleListQuerySerializer(data=request.query_params)
+        q.is_valid(raise_exception=True)
+        size = int(q.validated_data["size"])
+        difficulty = str(q.validated_data["difficulty"])
         obj = (
             PuzzleTemplate.objects.filter(size=size, difficulty_label=difficulty)
             .order_by("?")
@@ -41,9 +45,18 @@ class PuzzleTemplateViewSet(viewsets.ReadOnlyModelViewSet):
 
 class GameSessionViewSet(viewsets.ViewSet):
     http_method_names = ["get", "post", "put"]
+    # In strict mode, only authenticated users can create/update/fetch games.
+    # Otherwise AllowAny for MVP convenience.
+    def get_permissions(self) -> list[permissions.BasePermission]:  # type: ignore[override]
+        if settings.SECURITY_STRICT_API:
+            if self.action in {"create", "update", "check", "hint", "retrieve"}:
+                return [permissions.IsAuthenticated()]  # type: ignore[list-item]
+        return [permissions.AllowAny()]  # type: ignore[list-item]
 
     def create(self, request: Request) -> Response:
-        template_id = int(request.data["template_id"])  # raises KeyError if missing
+        ser = GameCreateSerializer(data=request.data)
+        ser.is_valid(raise_exception=True)
+        template_id = int(ser.validated_data["template_id"])  # raises KeyError if missing
         user_id = request.user.id if request.user.is_authenticated else None
         game = start_game(user_id=user_id, template_id=template_id)
         return Response({"id": game.id, "status": game.status, "board_state": game.board_state})
@@ -51,6 +64,11 @@ class GameSessionViewSet(viewsets.ViewSet):
     def retrieve(self, request: Request, pk: str | None = None) -> Response:
         assert pk is not None
         game = GameSession.objects.get(pk=int(pk))
+        if settings.SECURITY_STRICT_API:
+            # Enforce ownership when strict
+            if game.user_id is not None:
+                if not request.user.is_authenticated or request.user.id != game.user_id:
+                    return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
         return Response(
             {
                 "id": game.id,
@@ -63,18 +81,29 @@ class GameSessionViewSet(viewsets.ViewSet):
 
     def update(self, request: Request, pk: str | None = None) -> Response:
         assert pk is not None
-        game = GameSession.objects.get(pk=int(pk))
-        fields = {}
-        if "board_state" in request.data:
-            fields["board_state"] = request.data["board_state"]
-        if "pencil_marks" in request.data:
-            fields["pencil_marks"] = request.data["pencil_marks"]
-        if "time_seconds" in request.data:
-            fields["time_seconds"] = int(request.data["time_seconds"])  # trust client for MVP
-        for k, v in fields.items():
-            setattr(game, k, v)
-        if fields:
-            game.save(update_fields=[*fields.keys(), "updated_at"])
+        game = GameSession.objects.select_related("puzzle").get(pk=int(pk))
+        if settings.SECURITY_STRICT_API:
+            if game.user_id is not None:
+                if not request.user.is_authenticated or request.user.id != game.user_id:
+                    return Response({"detail": "Forbidden"}, status=status.HTTP_403_FORBIDDEN)
+
+        ser = GameUpdateSerializer(data=request.data, partial=True, context={"size": game.puzzle.size})
+        ser.is_valid(raise_exception=True)
+
+        data = ser.validated_data
+        update_fields: list[str] = []
+        if "board_state" in data:
+            game.board_state = data["board_state"]
+            update_fields.append("board_state")
+        if "pencil_marks" in data:
+            game.pencil_marks = data["pencil_marks"]
+            update_fields.append("pencil_marks")
+        if "time_seconds" in data:
+            game.time_seconds = int(data["time_seconds"])  # still trusting client time
+            update_fields.append("time_seconds")
+        if update_fields:
+            update_fields.append("updated_at")
+            game.save(update_fields=update_fields)
         return Response({"ok": True})
 
     @action(detail=True, methods=["post"], url_path="check")

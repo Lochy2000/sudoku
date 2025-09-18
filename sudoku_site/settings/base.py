@@ -61,6 +61,27 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+# REST framework baseline configuration
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+    # Keep permissive by default; individual views enforce stricter rules or
+    # the SECURITY_STRICT_API flag can be used to tighten globally.
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    # Conservative defaults; can be overridden via env if needed
+    "DEFAULT_THROTTLE_RATES": {
+        "anon": "60/min",
+        "user": "120/min",
+    },
+}
+
 # Authentication & password validation
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -107,3 +128,8 @@ try:
     }
 except Exception:  # pragma: no cover - if celery not importable in some contexts
     CELERY_BEAT_SCHEDULE = {}
+
+# Security strictness toggle for API endpoints (used by views)
+# - In dev/tests, default False to avoid breaking existing flows
+# - In prod (see prod.py), this should be enabled
+SECURITY_STRICT_API = os.getenv("SECURITY_STRICT_API", "0") == "1"
