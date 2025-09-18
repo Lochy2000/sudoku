@@ -81,3 +81,29 @@ AUTH_PASSWORD_VALIDATORS = [
 LOGIN_URL = "/accounts/login"
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+# Celery (defaults aim for local/dev without broker)
+CELERY_BROKER_URL = os.getenv("CELERY_BROKER_URL", "redis://localhost:6379/0")
+CELERY_RESULT_BACKEND = os.getenv("CELERY_RESULT_BACKEND", "redis://localhost:6379/1")
+# In tests, run tasks eagerly so Redis is not required
+CELERY_TASK_ALWAYS_EAGER = os.getenv("CELERY_TASK_ALWAYS_EAGER", "1") == "1"
+CELERY_TASK_EAGER_PROPAGATES = True
+
+# Celery beat schedule (runs when beat is active; harmless in eager mode)
+try:
+    from celery.schedules import crontab
+
+    CELERY_BEAT_SCHEDULE = {
+        "refill-queue-9x9-medium": {
+            "task": "puzzle.tasks.refill_puzzle_queue",
+            "schedule": crontab(minute=0, hour="*/6"),
+            "kwargs": {"size": 9, "difficulty": "medium", "min_count": 50},
+        },
+        "precreate-daily-7days": {
+            "task": "puzzle.tasks.precreate_daily_challenges",
+            "schedule": crontab(minute=0, hour=1),
+            "kwargs": {"days_ahead": 7, "size": 9, "difficulty": "medium"},
+        },
+    }
+except Exception:  # pragma: no cover - if celery not importable in some contexts
+    CELERY_BEAT_SCHEDULE = {}

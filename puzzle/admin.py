@@ -11,7 +11,8 @@ from django.middleware.csrf import get_token
 from django.shortcuts import redirect
 from django.urls import path
 
-from .models import DailyChallenge, GameSession, PuzzleTemplate
+from .models import AnalyticsEvent, DailyChallenge, GameSession, PuzzleTemplate
+from .services.analytics import average_time_seconds_by_difficulty
 from .services.engines import GridSpec
 from .services.factory import get_engine_for
 
@@ -171,10 +172,58 @@ class GameSessionAdmin(admin.ModelAdmin):
     search_fields = ("user__username",)
     readonly_fields = ("started_at", "updated_at")
 
+    def get_urls(self) -> list:  # type: ignore[override]
+        urls = super().get_urls()
+        custom = [
+            path(
+                "analytics/",
+                self.admin_site.admin_view(self.analytics_view),
+                name="puzzle_gamesession_analytics",
+            ),
+        ]
+        return custom + urls
+
+    def analytics_view(self, request: HttpRequest) -> HttpResponse:
+        size_param = request.GET.get("size")
+        size = int(size_param) if size_param and size_param.isdigit() else None
+        rows = average_time_seconds_by_difficulty(size=size)
+        tr = (
+            "".join(
+                f"<tr><td>{r.difficulty_label}</td><td>{r.average_time_seconds:.1f}</td></tr>"
+                for r in rows
+            )
+            or "<tr><td colspan='2'>No data</td></tr>"
+        )
+        html = f"""
+            <div class='container'>
+              <h1>Analytics — Average Completion Time</h1>
+              <form method='get' style='margin-bottom:1rem'>
+                <label>Size:
+                  <input type='number' name='size' value='{size or ''}' placeholder='(any)'
+                         min='1'/>
+                </label>
+                <button type='submit' class='default'>Filter</button>
+              </form>
+              <table class='adminlist'>
+                <thead><tr><th>Difficulty</th><th>Avg Time (s)</th></tr></thead>
+                <tbody>{tr}</tbody>
+              </table>
+            </div>
+        """
+        return HttpResponse(html)
+
 
 @admin.register(DailyChallenge)
 class DailyChallengeAdmin(admin.ModelAdmin):
     list_display = ("date", "puzzle", "created_at")
     list_filter = ("date",)
     search_fields = ("puzzle__source",)
+    readonly_fields = ("created_at",)
+
+
+@admin.register(AnalyticsEvent)
+class AnalyticsEventAdmin(admin.ModelAdmin):
+    list_display = ("id", "name", "user", "game", "created_at")
+    list_filter = ("name", "created_at")
+    search_fields = ("name", "user__username")
     readonly_fields = ("created_at",)

@@ -124,3 +124,32 @@ class DailyChallenge(models.Model):
 
     def __str__(self) -> str:  # pragma: no cover - trivial
         return f"DailyChallenge(date={self.date}, puzzle={self.puzzle_id})"
+
+
+class AnalyticsEvent(models.Model):
+    """Lightweight analytics log for gameplay events.
+
+    Stores event name, associated user and game, and a small JSON payload.
+    Intended for internal reporting in Phase 13.
+    """
+
+    EVENT_GAME_START = "game_start"
+    EVENT_HINT_USED = "hint_used"
+    EVENT_GAME_COMPLETE = "game_complete"
+
+    name = models.CharField(max_length=64)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True
+    )
+    game = models.ForeignKey("GameSession", on_delete=models.SET_NULL, null=True, blank=True)
+    payload = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=["name", "created_at"], name="analytics_name_time"),
+        ]
+        ordering = ["-created_at"]
+
+    def __str__(self) -> str:  # pragma: no cover - trivial
+        return f"AnalyticsEvent(name={self.name}, user={self.user_id}, game={self.game_id})"

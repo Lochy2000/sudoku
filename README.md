@@ -37,6 +37,10 @@ Copy-Item .env.example .env
 docker compose up --build
 ```
 
+### Background jobs
+- Celery is configured. In Docker, worker/beat are separate services.
+- In dev/tests, tasks run eagerly by default (no Redis needed) unless overridden.
+
 ### Developer tooling
 - Lint: `ruff check .`  | Format: `ruff format .`
 - Types: `mypy .`

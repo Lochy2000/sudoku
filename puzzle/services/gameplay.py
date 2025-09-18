@@ -5,7 +5,7 @@ from typing import Any
 
 from django.utils import timezone
 
-from puzzle.models import GameSession, PuzzleTemplate
+from puzzle.models import AnalyticsEvent, GameSession, PuzzleTemplate
 
 
 @dataclass(frozen=True)
@@ -29,6 +29,13 @@ def start_game(*, user_id: int | None, template_id: int) -> GameSession:
         pencil_marks={},
         mistakes_count=0,
         time_seconds=0,
+    )
+    # Analytics: game start
+    AnalyticsEvent.objects.create(
+        name=AnalyticsEvent.EVENT_GAME_START,
+        user_id=user_id,
+        game=game,
+        payload={"template_id": template.id},
     )
     return game
 
@@ -107,4 +114,11 @@ def complete_game(*, game_id: int) -> GameSession:
     game.status = GameSession.STATUS_COMPLETED
     game.completed_at = timezone.now()
     game.save(update_fields=["status", "completed_at", "updated_at"])
+    # Analytics: game complete
+    AnalyticsEvent.objects.create(
+        name=AnalyticsEvent.EVENT_GAME_COMPLETE,
+        user=game.user,
+        game=game,
+        payload={"time_seconds": game.time_seconds, "mistakes": game.mistakes_count},
+    )
     return game

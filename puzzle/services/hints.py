@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from puzzle.models import GameSession
+from puzzle.models import AnalyticsEvent, GameSession
 
 
 @dataclass(frozen=True)
@@ -37,4 +37,12 @@ def get_next_hint(*, game_id: int) -> Hint | None:
     except ValueError:
         return None
 
-    return Hint(cell_index=idx, value=correct_value, technique="single-candidate")
+    hint = Hint(cell_index=idx, value=correct_value, technique="single-candidate")
+    # Analytics: hint used
+    AnalyticsEvent.objects.create(
+        name=AnalyticsEvent.EVENT_HINT_USED,
+        user=game.user,
+        game=game,
+        payload={"cell_index": idx, "technique": hint.technique},
+    )
+    return hint
